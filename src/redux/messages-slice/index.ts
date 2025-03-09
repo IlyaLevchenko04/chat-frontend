@@ -17,9 +17,13 @@ export const messagesSlice = createSlice({
       state.messages = action.payload;
     },
     addNewMessage: (state, action: PayloadAction<Message>) => {
-      const uniqueMessages = new Set([...state.messages, action.payload]);
+      const isDuplicated = state.messages
+        .map(item => item._id)
+        .includes(action.payload._id);
 
-      state.messages = Array.from(uniqueMessages);
+      if (isDuplicated) return;
+
+      state.messages = [...state.messages, action.payload];
     },
   },
 });
