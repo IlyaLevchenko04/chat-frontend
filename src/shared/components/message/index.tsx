@@ -1,8 +1,8 @@
-import { useCurrentDate } from '../../hooks/date';
-import { Message } from '../../types/sockets';
+import { getCurrentDate } from "@shared/helpers/date";
+import { Message } from "@shared/types/sockets";
 
 export const MessageCard = (props: Message) => {
-  const { date, time } = useCurrentDate(props.timestamp);
+  const { date, time } = getCurrentDate(props.timestamp);
 
   return (
     <div className="flex justify-between gap-[12px] items-end border border-gray-300 rounded-xl p-4 bg-white shadow-sm">

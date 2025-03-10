@@ -1,6 +1,6 @@
-import { configureStore } from '@reduxjs/toolkit';
-import messagesReducer from './messages-slice';
-import userReducer from './user-slice';
+import { configureStore } from "@reduxjs/toolkit";
+import messagesReducer from "@redux/messages-slice";
+import userReducer from "@redux/user-slice";
 
 export const store = configureStore({
   reducer: {
@@ -8,7 +8,3 @@ export const store = configureStore({
     user: userReducer,
   },
 });
-
-export type RootState = ReturnType<typeof store.getState>;
-
-export type AppDispatch = typeof store.dispatch;
