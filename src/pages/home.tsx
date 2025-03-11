@@ -38,6 +38,9 @@ function Home() {
     setText("");
   };
 
+  const messageInputHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setText(e.target.value);
+
   return (
     <div className="p-[16px]">
       <div className="grid tablet:grid-cols-[0.7fr_1.3fr] gap-[24px]">
@@ -51,11 +54,12 @@ function Home() {
           <div className="flex flex-col">
             <label className="text-sm text-gray-600">Type a message</label>
             <textarea
-              onChange={(e) => setText(e.target.value)}
+              onChange={messageInputHandler}
               value={text}
               className="p-2 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter your message"
               rows={3}
+              required={true}
             />
           </div>
 

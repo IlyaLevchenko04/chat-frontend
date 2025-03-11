@@ -5,7 +5,7 @@ import { logout } from "@redux/user-slice";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user);
+  const { user } = useAppSelector((state) => state.user);
   const logoutHandler = () => {
     dispatch(logout());
   };
@@ -16,9 +16,9 @@ export const Header = () => {
         Home
       </Link>
 
-      {user.user && (
-        <div className="">
-          <p>Hello, {user.user.name}</p>
+      {user && (
+        <div>
+          <p>Hello, {user.name}</p>
           <button
             className="w-full p-[4px] bg-blue-500 text-white text-[12px] rounded-md hover:bg-blue-600 transition"
             onClick={logoutHandler}
