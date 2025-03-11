@@ -1,25 +1,26 @@
-import { useEffect, useState } from 'react';
-import { socket } from '../shared/utils/socket';
-import { useAppDispatch, useAppSelector } from '../shared/hooks/redux';
-import { addNewMessage, setMessages } from '../redux/messages-slice';
-import { MessageCard } from '../shared/components/message';
-import { ROUTER_BOOK } from '../constants/router-book';
+import { useEffect, useState } from "react";
+import { socket } from "@shared/services/socket";
+import { useAppDispatch, useAppSelector } from "@shared/hooks/redux";
+import { addNewMessage, setMessages } from "@redux/messages-slice";
+import { MessageCard } from "@shared/components/message";
+import { ROUTER_BOOK } from "@shared/constants/router-book";
 
-function App() {
+function Home() {
   const dispatch = useAppDispatch();
-  const messages = useAppSelector(state => state.messages.messages);
-  const userInfo = useAppSelector(state => state.user.user);
-  const [user, setUser] = useState<string>('');
-  const [text, setText] = useState<string>('');
+  const messages = useAppSelector((state) => state.messages.messages);
+  const userInfo = useAppSelector((state) => state.user.user);
+  const [text, setText] = useState<string>("");
+
+  const isCardsExists = messages.length > 0;
 
   useEffect(() => {
     socket.connect();
 
-    socket.on('initial_messages', initialMessages => {
+    socket.on("initial_messages", (initialMessages) => {
       dispatch(setMessages(initialMessages));
     });
 
-    socket.on('new_message', newMessage => {
+    socket.on("new_message", (newMessage) => {
       dispatch(addNewMessage(newMessage));
     });
 
@@ -30,12 +31,15 @@ function App() {
 
   const sendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!user || !text) return;
+    if (!userInfo || !text) return;
 
-    socket.emit('new_message', { user, text });
+    socket.emit("new_message", { user: userInfo?.name, text });
 
-    setText('');
+    setText("");
   };
+
+  const messageInputHandler = (e: React.ChangeEvent<HTMLTextAreaElement>) =>
+    setText(e.target.value);
 
   return (
     <div className="p-[16px]">
@@ -46,27 +50,16 @@ function App() {
         >
           <h2 className="font-semibold text-lg">Chat App</h2>
 
-          {/* Name Input */}
-          <div className="flex flex-col">
-            <label className="text-sm text-gray-600">Your name</label>
-            <input
-              onChange={e => setUser(e.target.value)}
-              value={user}
-              type="text"
-              className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="Enter your name"
-            />
-          </div>
-
           {/* Message Input */}
           <div className="flex flex-col">
             <label className="text-sm text-gray-600">Type a message</label>
             <textarea
-              onChange={e => setText(e.target.value)}
+              onChange={messageInputHandler}
               value={text}
               className="p-2 border border-gray-300 rounded-md resize-none focus:ring-2 focus:ring-blue-500 outline-none"
               placeholder="Enter your message"
               rows={3}
+              required={true}
             />
           </div>
 
@@ -77,18 +70,18 @@ function App() {
         </form>
 
         <div>
-          {messages.length > 0 ? (
-            !userInfo ? (
+          {isCardsExists ? (
+            userInfo ? (
+              <div className="grid gap-[16px]">
+                {messages.map((message) => (
+                  <MessageCard key={message._id} {...message} />
+                ))}
+              </div>
+            ) : (
               <div className="absolute inset-0 backdrop-blur-md bg-white/40 flex items-center justify-center">
                 <p className="text-lg font-semibold text-gray-700">
                   Please <a href={ROUTER_BOOK.login}>sign in</a> to chat
                 </p>
-              </div>
-            ) : (
-              <div className="grid gap-[16px]">
-                {messages.map(message => (
-                  <MessageCard key={message._id} {...message} />
-                ))}
               </div>
             )
           ) : (
@@ -100,4 +93,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;
